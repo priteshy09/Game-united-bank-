@@ -1,0 +1,42 @@
+// PlayerInput.cs
+using UnityEngine;
+
+public class PlayerInput : MonoBehaviour
+{
+    private ChessBoard chessBoard;
+    private GameObject selectedPiece;
+
+    void Start()
+    {
+        chessBoard = FindObjectOfType<ChessBoard>();
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                Vector3 hitPoint = hit.point;
+                Vector2Int boardPos = new Vector2Int(
+                    Mathf.RoundToInt(hitPoint.x + 3.5f),
+                    Mathf.RoundToInt(hitPoint.z + 3.5f)
+                );
+
+                if (selectedPiece == null)
+                {
+                    // Select piece
+                    selectedPiece = hit.collider.gameObject;
+                }
+                else
+                {
+                    // Move piece
+                    chessBoard.MovePiece(selectedPiece, boardPos);
+                    selectedPiece = null;
+                }
+            }
+        }
+    }
+}
