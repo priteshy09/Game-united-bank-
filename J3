@@ -1,0 +1,57 @@
+// ChessBoard.cs
+using UnityEngine;
+
+public class ChessBoard : MonoBehaviour
+{
+    private GameObject[,] board = new GameObject[8, 8]; // 8x8 chessboard
+    public GameObject whitePawn, blackPawn; // Prefabs for pieces
+    private Vector3 boardOffset = new Vector3(-3.5f, 0, -3.5f); // Center board
+
+    void Start()
+    {
+        SetupBoard();
+    }
+
+    void SetupBoard()
+    {
+        // Example: Place pawns (extend for other pieces)
+        for (int i = 0; i < 8; i++)
+        {
+            // White pawns at row 1
+            Vector3 pos = new Vector3(i, 0, 1) + boardOffset;
+            board[i, 1] = Instantiate(whitePawn, pos, Quaternion.identity);
+
+            // Black pawns at row 6
+            pos = new Vector3(i, 0, 6) + boardOffset;
+            board[i, 6] = Instantiate(blackPawn, pos, Quaternion.identity);
+        }
+    }
+
+    // Basic piece movement logic
+    public void MovePiece(GameObject piece, Vector2Int newPos)
+    {
+        Vector2Int oldPos = GetPiecePosition(piece);
+        if (IsValidMove(oldPos, newPos))
+        {
+            board[oldPos.x, oldPos.y] = null;
+            board[newPos.x, newPos.y] = piece;
+            piece.transform.position = new Vector3(newPos.x, 0, newPos.y) + boardOffset;
+        }
+    }
+
+    private Vector2Int GetPiecePosition(GameObject piece)
+    {
+        for (int x = 0; x < 8; x++)
+            for (int y = 0; y < 8; y++)
+                if (board[x, y] == piece)
+                    return new Vector2Int(x, y);
+        return new Vector2Int(-1, -1);
+    }
+
+    private bool IsValidMove(Vector2Int oldPos, Vector2Int newPos)
+    {
+        // Add chess rules here (e.g., pawn moves forward one square)
+        // Simplified: Check if new position is within board
+        return newPos.x >= 0 && newPos.x < 8 && newPos.y >= 0 && newPos.y < 8;
+    }
+}
